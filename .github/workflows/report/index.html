@@ -2,45 +2,56 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Healthcheck Dashboard</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
-    #status { margin-top: 20px; font-weight: bold; }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Runner</title>
 </head>
 <body>
-  <h1>🚦 Healthcheck Dashboard</h1>
-  <button onclick="runTests()">Run Tests</button>
-  <p id="status">Status: Idle</p>
+  <h1>Tests runs automaticaly</h1>
+  <div id="status">Please wait</div>
 
   <script>
-    const owner = "RomanDiachenko";   // 🔴 заміни на свій GitHub username
-    const repo = "testExternalUrlReport"; // 🔴 заміни на свій репозиторій
-    const workflow = "healthcheck.yml"; // 🔴 назва твого workflow-файлу
+    const GITHUB_TOKEN = {API_TOKEN_GITHUB}; // ATTENTION!!!! SHOULD BE CHANGED!!!!
+    const OWNER = 'romandiachenko';
+    const REPO = 'testExternalUrlReport';
+    const WORKFLOW_FILE = 'healthcheck.yml'; // workflow file name
+    const REF = 'main';
 
     async function runTests() {
-      document.getElementById("status").innerText = "Status: Running tests...";
+      const statusDiv = document.getElementById('status');
+      statusDiv.textContent = 'Запускаємо тести...';
 
-      const response = await fetch(
-        `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflow}/dispatches`,
-        {
-          method: "POST",
-          headers: {
-            "Accept": "application/vnd.github+json",
-            "Authorization": "Bearer YOUR_TOKEN_HERE", // 🔴 треба замінити
-          },
-          body: JSON.stringify({ ref: "main" }) // гілка
+      try {
+        const response = await fetch(
+          `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW_FILE}/dispatches`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${GITHUB_TOKEN}`,
+              'Accept': 'application/vnd.github+json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              ref: REF,
+              inputs: {
+                run_tests: true
+              }
+            })
+          }
+        );
+
+        if (response.ok) {
+          statusDiv.textContent = 'Tests started, please wait...';
+        } else {
+          const errorText = await response.text();
+          statusDiv.textContent = 'Tests executing error: ' + errorText;
         }
-      );
-
-      if (response.ok) {
-        document.getElementById("status").innerText = "✅ Workflow started! Please refresh later to see results.";
-      } else {
-        const error = await response.json();
-        document.getElementById("status").innerText = "❌ Error: " + JSON.stringify(error);
+      } catch (err) {
+        statusDiv.textContent = 'Error: ' + err.message;
       }
     }
+
+    // Update on load
+    window.addEventListener('load', runTests);
   </script>
 </body>
 </html>
