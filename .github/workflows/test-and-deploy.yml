@@ -1,0 +1,32 @@
+name: Test and Deploy Custom Report
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        run: pytest tests --junitxml=results/results.xml
+
+      - name: Generate HTML report
+        run: python scripts/generate_report.py
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v7
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./report
