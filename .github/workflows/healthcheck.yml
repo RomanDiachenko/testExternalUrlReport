@@ -1,0 +1,44 @@
+name: Healthcheck
+
+on:
+  workflow_dispatch: # ручний запуск
+  push:              # або при пушах, якщо потрібно
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run pytest and generate JUnit XML
+        run: pytest tests --junitxml=report.xml
+
+      - name: Generate custom HTML report
+        run: python generate_report.py
+
+      - name: Upload artifact (HTML report)
+        uses: actions/upload-artifact@v4
+        with:
+          name: healthcheck-report
+          path: report
+
+  deploy-pages:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download report artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: healthcheck-report
+          path: ./report
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v6
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./report
