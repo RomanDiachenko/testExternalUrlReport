@@ -1,1 +1,24 @@
-<html><head><title>Healthcheck Report</title><style>body{font-family:sans-serif;} .ok{color:green;} .fail{color:red;}</style></head><body><h1>Healthcheck Results</h1><ul><li>test_service1_alive → <span class="ok">ALIVE</span></li><li>test_service2_alive → <span class="fail">FAILED</span></li></ul></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Service Healthcheck Report</title>
+<style>
+body { font-family: Arial, sans-serif; background: #f9f9f9; padding: 40px; }
+h1 { text-align: center; margin-bottom: 30px; }
+table { width: 80%; margin: 0 auto; border-collapse: collapse; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+th { background: #f3f3f3; }
+.status { font-weight: bold; padding: 6px 12px; border-radius: 6px; color: white; text-align: center; }
+.up { background: #28a745; }      /* зелений */
+.down { background: #dc3545; }    /* червоний */
+.warn { background: #ffc107; color: black; } /* жовтий */
+</style>
+</head>
+<body>
+<h1>Service Healthcheck Report</h1>
+<table>
+<tr><th>Your Services</th><th>Status</th></tr>
+<tr><td>test_service1_alive</td><td><span class="status up">UP</span></td></tr>
+<tr><td>test_service2_alive</td><td><span class="status down">DOWN</span></td></tr>
+</table></body></html>
