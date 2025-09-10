@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Runner</title>
+</head>
+<body>
+  <h1>Tests runs automaticaly</h1>
+  <div id="status">Please wait</div>
+
+  <script>
+    const GITHUB_TOKEN = {API_TOKEN_GITHUB}; // ATTENTION!!!! SHOULD BE CHANGED!!!!
+    const OWNER = 'romandiachenko';
+    const REPO = 'testExternalUrlReport';
+    const WORKFLOW_FILE = 'healthcheck.yml'; // workflow file name
+    const REF = 'main';
+
+    async function runTests() {
+      const statusDiv = document.getElementById('status');
+      statusDiv.textContent = 'Запускаємо тести...';
+
+      try {
+        const response = await fetch(
+          `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW_FILE}/dispatches`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${GITHUB_TOKEN}`,
+              'Accept': 'application/vnd.github+json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              ref: REF,
+              inputs: {
+                run_tests: true
+              }
+            })
+          }
+        );
+
+        if (response.ok) {
+          statusDiv.textContent = 'Tests started, please wait...';
+        } else {
+          const errorText = await response.text();
+          statusDiv.textContent = 'Tests executing error: ' + errorText;
+        }
+      } catch (err) {
+        statusDiv.textContent = 'Error: ' + err.message;
+      }
+    }
+
+    // Update on load
+    window.addEventListener('load', runTests);
+  </script>
+</body>
+</html>
