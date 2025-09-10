@@ -2,7 +2,7 @@ import xmltodict
 from pathlib import Path
 
 # Шлях до результатів
-xml_file = Path('results/results.xml')
+xml_file = Path('report.xml')
 report_file = Path('report/index.html')
 
 # Читаємо XML
