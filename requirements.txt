@@ -1,2 +1,4 @@
 pytest
-junitparser
+pytest-metadata
+pytest-html
+xmltodict
