@@ -1,8 +1,8 @@
+# .github/workflows/healthcheck.yml
 name: Healthcheck
 
 on:
-  workflow_dispatch: # ручний запуск
-  push:              # або при пушах, якщо потрібно
+  workflow_dispatch:   # alluw run from the button
 
 jobs:
   test:
